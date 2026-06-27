@@ -1,2 +1,319 @@
 # Artificial-Intelligence
 Code
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minnie Shihtzy AI - Modern Graphic & Photo Design Editor</title>
+    <style>
+        /* Modern CSS Reset & Variable Setup */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        :root {
+            --bg-dark: #0f111a;
+            --sidebar-bg: #161925;
+            --accent-purple: #8b5cf6;
+            --accent-pink: #ec4899;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border-color: #2e3244;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Top Navigation Bar */
+        header {
+            background-color: var(--sidebar-bg);
+            height: 65px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            border-bottom: 1px solid var(--border-color);
+            z-index: 10;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-img {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-pink);
+        }
+
+        .logo-text {
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, var(--text-main), var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 9px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: var(--text-muted);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+            color: white;
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(236, 72, 153, 0.35);
+        }
+
+        /* Main Studio Layout */
+        .studio-container {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 65px);
+        }
+
+        /* Canva-like Side Control Panel */
+        .sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .section-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .ai-prompt-box {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 90px;
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            color: var(--text-main);
+            resize: none;
+            font-size: 0.85rem;
+        }
+
+        textarea:focus {
+            outline: 2px solid var(--accent-purple);
+            border-color: transparent;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .tool-card {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.8rem;
+        }
+
+        .tool-card:hover {
+            border-color: var(--accent-pink);
+            background-color: rgba(236, 72, 153, 0.03);
+        }
+
+        .tool-icon {
+            font-size: 1.4rem;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        /* Skriveni input za upload */
+        #imageUpload {
+            display: none;
+        }
+
+        /* Live Canvas Workspace Area */
+        .workspace {
+            flex: 1;
+            background-color: var(--bg-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 40px;
+            background-image: radial-gradient(#222533 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .canvas-frame {
+            background-color: #1e2235;
+            width: 480px;
+            height: 540px;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            border: 2px dashed var(--border-color);
+        }
+
+        .canvas-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none; /* Sakriveno dok se slika ne učita */
+        }
+
+        /* Početni tekst na platnu kada nema slike */
+        .upload-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-muted);
+            cursor: pointer;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .upload-placeholder-icon {
+            font-size: 3rem;
+            color: var(--accent-purple);
+        }
+
+        /* Status & Floating Info */
+        .watermark-info {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            background-color: rgba(15, 17, 26, 0.85);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            border: 1px solid var(--border-color);
+            color: var(--accent-pink);
+            backdrop-filter: blur(4px);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="logo-area">
+            <img src="https://unsplash.com" alt="Minnie Shihtzy Logo" class="logo-img">
+            <span class="logo-text">Minnie Shihtzy AI Studio</span>
+        </div>
+        <div class="action-buttons">
+            <!-- Dugme za Upload u gornjem meniju -->
+            <button class="btn btn-secondary" onclick="triggerUpload()">📁 Učitaj Sliku</button>
+            <button class="btn btn-secondary" onclick="resetDesign()">Poništi</button>
+            <!-- Pravo funkcionalno dugme za Download -->
+            <button class="btn btn-primary" onclick="exportDesign()">⬇️ Preuzmi Dizajn</button>
+        </div>
+    </header>
+
+    <!-- Skriveni fajl input za učitavanje slika -->
+    <input type="file" id="imageUpload" accept="image/*" onchange="loadImage(event)">
+
+    <!-- Workspace & Control Center -->
+    <div class="studio-container">
+        <!-- Sidebar Controls -->
+        <aside class="sidebar">
+            <div class="ai-prompt-box">
+                <h3 class="section-title">Generiraj uz AI</h3>
+                <textarea id="aiPrompt" placeholder="Unesite opis promjene (npr. 'Dodaj ljetne naočale psu i sunčanu pozadinu')..."></textarea>
+                <button class="btn btn-primary" style="width: 100%;" onclick="runAi()">Transformiraj Sliku</button>
+            </div>
+
+            <div>
+                <h3 class="section-title">Brzi AI Filtri</h3>
+                <div class="tools-grid">
+                    <div class="tool-card" onclick="applyFilter('blur(4px)')">
+                        <span class="tool-icon">🔮</span>Zamuti pozadinu
+                    </div>
+                    <div class="tool-card" onclick="applyFilter('grayscale(100%)')">
+                        <span class="tool-icon">🖤</span>Crno-bijelo
+                    </div>
+                    <div class="tool-card" onclick="applyFilter('contrast(150%) brightness(110%)')">
+                        <span class="tool-icon">✨</span>AI Poboljšanje
+                    </div>
+                    <div class="tool-card" onclick="applyFilter('sepia(80%)')">
+                        <span class="tool-icon">🍂</span>Vintage izgled
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace View -->
+        <main class="workspace">
+            <div class="canvas-frame" id="canvasFrame">
+                <!-- Placeholder tekst i ikona ako slika nije učitana -->
+                <div class="upload-placeholder" id="uploadPlaceholder" onclick="triggerUpload()">
+                    <span class="upload-placeholder-icon">📸</span>
